@@ -41,7 +41,7 @@ public class UDPReceive : MonoBehaviour
                 byte[] dataByte = client.Receive(ref anyIP);
                 data = Encoding.UTF8.GetString(dataByte);
 
-                //gestures can be: pointer, open, close
+                //gestures can be: pointer, open, close, ok
                 //movement can be: clockwise, counter clockwise, move, stop
                 gestureMovementArr = data.Split(',');
 
