@@ -62,8 +62,10 @@ public class PlaneController : MonoBehaviour
         rb.AddTorque(transform.up * yaw * responsiveModifier);
         rb.AddTorque(transform.right * pitch * responsiveModifier);
         rb.AddTorque(-transform.forward * roll * responsiveModifier);
-
-        rb.AddForce(Vector3.up*rb.velocity.magnitude*lift);
+        if (transform.position.y < 20) {
+            rb.AddForce(Vector3.up * rb.velocity.magnitude * lift);
+        }
+        
     }
 
     private void updateHUD()
