@@ -127,7 +127,7 @@ public class PlaneController : MonoBehaviour
         //    yaw = 0.0f;
         //}
 
-        Debug.Log(roll + " " + pitch + " " + yaw);
+        //Debug.Log(roll + " " + pitch + " " + yaw);
 
         roll = Mathf.Clamp(roll, -1.0f, 1.0f);
         pitch = Mathf.Clamp(pitch, -1.0f, 1.0f);
