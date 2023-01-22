@@ -23,6 +23,8 @@ public class PlaneController : MonoBehaviour
     private float pitch;
     private float yaw;
 
+    public bool isKeyboardControls;
+
     private float responsiveModifier
     {
         get
@@ -45,12 +47,17 @@ public class PlaneController : MonoBehaviour
         roll = 0.0f;
         pitch = 0.0f;
         yaw = 0.0f;
+
+        isKeyboardControls = false;
     }
 
     private void Update()
     {
-        HandleHandCaptureInput();
-        //HandleKeyboardInputs();
+        if (Input.GetKeyDown(KeyCode.Z)) isKeyboardControls = !isKeyboardControls;
+
+        if (isKeyboardControls) HandleKeyboardInputs();
+        else if (!isKeyboardControls) HandleHandCaptureInput();
+
         updateHUD();
         engineSound.volume = throttle * 0.01f;
     }
