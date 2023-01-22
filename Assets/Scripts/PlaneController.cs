@@ -48,15 +48,19 @@ public class PlaneController : MonoBehaviour
         pitch = 0.0f;
         yaw = 0.0f;
 
-        isKeyboardControls = false;
+        isKeyboardControls = true;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z)) isKeyboardControls = !isKeyboardControls;
 
-        if (isKeyboardControls) HandleKeyboardInputs();
-        else if (!isKeyboardControls) HandleHandCaptureInput();
+        if (isKeyboardControls)
+            HandleKeyboardInputs();
+        else if (!isKeyboardControls)
+            HandleHandCaptureInput();
+
+        Debug.Log(isKeyboardControls);
 
         updateHUD();
         engineSound.volume = throttle * 0.01f;
