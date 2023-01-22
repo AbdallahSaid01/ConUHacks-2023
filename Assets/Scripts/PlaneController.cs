@@ -15,6 +15,9 @@ public class PlaneController : MonoBehaviour
     [Tooltip("Howmust life the plane needs")]
     public float lift = 136f;
 
+    [SerializeField] GameObject inputReciever;
+    private UDPReceive inputRecieverComponent;
+
     private float throttle;
     private float roll;
     private float pitch;
@@ -36,23 +39,99 @@ public class PlaneController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         engineSound = GetComponent<AudioSource>();
-    }
-    private void HandleInputs()
-    {
-        roll = Input.GetAxis("Roll");
-        pitch = Input.GetAxis("Pitch");
-        yaw = Input.GetAxis("Yaw");
+        inputRecieverComponent = inputReciever.GetComponent<UDPReceive>();
+        
 
-        if (Input.GetKey(KeyCode.Space)) throttle += throttleIncrement;
-        else if(Input.GetKey(KeyCode.LeftControl)) throttle -= throttleIncrement;
-        throttle = Mathf.Clamp(throttle, 0f, 100f);
+        roll = 0.0f;
+        pitch = 0.0f;
+        yaw = 0.0f;
     }
 
     private void Update()
     {
-        HandleInputs();
+        HandleHandCaptureInput();
+        //HandleKeyboardInputs();
         updateHUD();
         engineSound.volume = throttle * 0.01f;
+    }
+
+    private void HandleHandCaptureInput()
+    {
+        //gestures can be: Pointer, Open, Close, Ok
+        //movement can be: Clockwise, Counter Clockwise, Move, Stop
+
+        //throtle control
+        if (inputRecieverComponent.gestureMovementArr[0].Equals("OK"))
+        {
+            throttle += throttleIncrement;
+        }
+        else if (inputRecieverComponent.gestureMovementArr[0].Equals("Close"))
+        {
+            throttle -= throttleIncrement;
+        }
+        Debug.Log(inputRecieverComponent.gestureMovementArr[0] + " " + inputRecieverComponent.gestureMovementArr[1]);
+
+        //roll and yaw control
+        if(inputRecieverComponent.gestureMovementArr[0].Equals("Pointer") && inputRecieverComponent.gestureMovementArr[1].Equals("Clockwise"))
+        {
+            roll = 1;
+            yaw += 0.1f;
+        }
+        else if (inputRecieverComponent.gestureMovementArr[0].Equals("Pointer") && inputRecieverComponent.gestureMovementArr[1].Equals("Counter Clockwise"))
+        {
+            roll = -1;
+            yaw -= 0.1f;
+        }
+        else
+        {
+            roll = 0.0f;
+            yaw = 0.0f;
+        }
+
+        //pitch control
+        if (inputRecieverComponent.gestureMovementArr[0].Equals("Pointer") && inputRecieverComponent.gestureMovementArr[1].Equals("Move"))
+        {
+            pitch += 0.1f;
+        }
+        else if (inputRecieverComponent.gestureMovementArr[0].Equals("Pointer") && inputRecieverComponent.gestureMovementArr[1].Equals("Stop"))
+        {
+            pitch -= 0.1f;
+        }
+        else
+        {
+            pitch = 0.0f;
+        }
+
+        //yaw control
+        //if (inputRecieverComponent.gestureMovementArr[0].Equals("Ok") && inputRecieverComponent.gestureMovementArr[1].Equals("Move"))
+        //{
+        //    yaw += 0.1f;
+        //}
+        //else if (inputRecieverComponent.gestureMovementArr[0].Equals("Ok") && inputRecieverComponent.gestureMovementArr[1].Equals("Stop"))
+        //{
+        //    yaw -= 0.1f;
+        //}
+        //else
+        //{
+        //    yaw = 0.0f;
+        //}
+
+        Debug.Log(roll + " " + pitch + " " + yaw);
+
+        roll = Mathf.Clamp(roll, -1.0f, 1.0f);
+        pitch = Mathf.Clamp(pitch, -1.0f, 1.0f);
+        yaw = Mathf.Clamp(yaw, -1.0f, 1.0f);
+        throttle = Mathf.Clamp(throttle, 0f, 100f);
+    }
+
+    private void HandleKeyboardInputs()
+    {
+        roll = Input.GetAxis("Roll"); // d positive, a negative cap at 1
+        pitch = Input.GetAxis("Pitch"); // w positive, s negative cap at 1
+        yaw = Input.GetAxis("Yaw"); // e positive, q negative cap at 1
+
+        if (Input.GetKey(KeyCode.Space)) throttle += throttleIncrement;
+        else if (Input.GetKey(KeyCode.LeftControl)) throttle -= throttleIncrement;
     }
 
     private void FixedUpdate()
